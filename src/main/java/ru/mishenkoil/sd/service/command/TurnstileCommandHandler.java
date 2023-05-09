@@ -63,7 +63,7 @@ public class TurnstileCommandHandler {
         boolean noEvents = exitEvent.isEmpty() && enterEvent.isEmpty();
 
         if (lastEventIsExit || noEvents) {
-            eventRepository.save(Event.create(EventType.ENTER, command.id()));
+            eventRepository.save(Event.create(EventType.EXIT, command.id()));
         } else {
             throw new RuntimeException("Вы и так вышли");
         }

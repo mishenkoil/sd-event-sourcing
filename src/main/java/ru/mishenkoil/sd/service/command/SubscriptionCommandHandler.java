@@ -1,5 +1,7 @@
 package ru.mishenkoil.sd.service.command;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,7 @@ public class SubscriptionCommandHandler {
     }
 
     public long createSubscription(CreateSubscriptionCommand command) {
-        Event event = eventRepository.save(Event.create(EventType.CREATE_SUBSCRIPTION));
+        Event event = eventRepository.save(Event.create(EventType.CREATE_SUBSCRIPTION, generateId()));
         return event.getSubscriptionId();
     }
 
@@ -30,5 +32,9 @@ public class SubscriptionCommandHandler {
         }
 
         eventRepository.save(Event.create(EventType.UPDATE_SUBSCRIPTION, command.id()));
+    }
+
+    private long generateId() {
+        return UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
     }
 }

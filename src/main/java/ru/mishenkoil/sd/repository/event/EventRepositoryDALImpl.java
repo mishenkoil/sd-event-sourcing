@@ -1,5 +1,6 @@
 package ru.mishenkoil.sd.repository.event;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,10 @@ public class EventRepositoryDALImpl implements EventRepositoryDAL {
                 subscriptionId,
                 eventType
         );
+    }
+
+    @Override
+    public List<Event> getAll() {
+        return eventRepository.findAll();
     }
 }

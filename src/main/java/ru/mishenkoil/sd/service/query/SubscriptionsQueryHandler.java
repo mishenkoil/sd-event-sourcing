@@ -6,12 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ru.mishenkoil.sd.model.event.Event;
-import ru.mishenkoil.sd.model.event.EventType;
 import ru.mishenkoil.sd.model.query.GetSubscriptionInfoQuery;
-import ru.mishenkoil.sd.repository.event.EventRepository;
 import ru.mishenkoil.sd.repository.event.EventRepositoryDALImpl;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class SubscriptionsQueryHandler {

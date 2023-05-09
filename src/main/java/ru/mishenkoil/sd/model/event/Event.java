@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -15,16 +14,11 @@ import jakarta.persistence.TemporalType;
 @Table
 public class Event {
 
-    public static Event create(EventType eventType) {
-        var event = new Event();
-        event.eventType = eventType;
-        return event;
-    }
-
     public static Event create(EventType eventType, long subscriptionId) {
         var event = new Event();
         event.eventType = eventType;
         event.subscriptionId = subscriptionId;
+        event.timestamp = new Timestamp(System.currentTimeMillis());
         return event;
     }
 
@@ -32,7 +26,6 @@ public class Event {
     @GeneratedValue
     private long id;
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long subscriptionId;
 
     private EventType eventType;

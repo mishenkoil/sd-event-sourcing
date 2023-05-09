@@ -10,7 +10,8 @@ import ru.mishenkoil.sd.model.command.EnterIfAvailableCommand;
 import ru.mishenkoil.sd.model.command.ExitCommand;
 import ru.mishenkoil.sd.service.command.TurnstileCommandHandler;
 
-@RestController("/turnstile")
+@RestController
+@RequestMapping("/turnstile")
 public class TurnstileEndpoint {
 
     private final TurnstileCommandHandler turnstileCommandHandler;

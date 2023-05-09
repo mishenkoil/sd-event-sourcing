@@ -2,6 +2,7 @@ package ru.mishenkoil.sd.endpoint;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,7 +12,8 @@ import ru.mishenkoil.sd.model.query.GetDailyAttendanceQuery;
 import ru.mishenkoil.sd.model.query.GetAttendanceStatQuery;
 import ru.mishenkoil.sd.service.query.ReportQueryHandler;
 
-@RestController("/report")
+@RestController
+@RequestMapping("/report")
 public class ReportEndpoint {
 
     private final ReportQueryHandler reportQueryHandler;

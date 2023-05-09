@@ -14,6 +14,7 @@ import org.hibernate.event.spi.PostInsertEvent;
 import org.hibernate.event.spi.PostInsertEventListener;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.persister.entity.EntityPersister;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ru.mishenkoil.sd.model.domain.AttendanceStatReport;
@@ -21,6 +22,7 @@ import ru.mishenkoil.sd.model.domain.DailyAttendanceReport;
 import ru.mishenkoil.sd.model.event.Event;
 import ru.mishenkoil.sd.model.query.GetAttendanceStatQuery;
 import ru.mishenkoil.sd.model.query.GetDailyAttendanceQuery;
+import ru.mishenkoil.sd.repository.event.EventRepositoryDAL;
 
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceUnit;
@@ -29,6 +31,9 @@ import jakarta.persistence.PersistenceUnit;
 public class ReportQueryHandler implements PostInsertEventListener {
 
     private final Map<Long, UserStats> stats = new HashMap<>();
+
+    @Autowired
+    private EventRepositoryDAL eventRepositoryDAL;
 
     @PersistenceUnit
     private EntityManagerFactory entityManagerFactory;
@@ -43,7 +48,9 @@ public class ReportQueryHandler implements PostInsertEventListener {
     }
 
     private void initStats() {
-
+        for (var event : eventRepositoryDAL.getAll()) {
+            processEvent(event);
+        }
     }
 
     @Override
@@ -51,11 +58,14 @@ public class ReportQueryHandler implements PostInsertEventListener {
         if (!(event.getEntity() instanceof Event e)) {
             return;
         }
+        processEvent(e);
+    }
 
-        switch (e.getEventType()) {
-            case CREATE_SUBSCRIPTION -> stats.put(e.getSubscriptionId(), new UserStats());
-            case ENTER -> stats.get(e.getSubscriptionId()).entered(e.getTimestamp());
-            case EXIT -> stats.get(e.getSubscriptionId()).exited(e.getTimestamp());
+    private void processEvent(Event event) {
+        switch (event.getEventType()) {
+            case CREATE_SUBSCRIPTION -> stats.put(event.getSubscriptionId(), new UserStats());
+            case ENTER -> stats.get(event.getSubscriptionId()).entered(event.getTimestamp());
+            case EXIT -> stats.get(event.getSubscriptionId()).exited(event.getTimestamp());
         }
     }
 
@@ -109,11 +119,11 @@ public class ReportQueryHandler implements PostInsertEventListener {
         }
 
         public double getMeanAttendance() {
-            return (double) totalAttendance / dailyAttendance.size();
+            return totalAttendance == 0 ? 0 : ((double) totalAttendance / dailyAttendance.size());
         }
 
         public double getMeanDuration() {
-            return (double) totalDuration / dailyAttendance.size();
+            return totalAttendance == 0 ? 0 : ((double)totalDuration / totalAttendance / 1000);
         }
 
         public Map<LocalDateTime, Integer> getDailyAttendanceStat() {
